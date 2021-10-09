@@ -7,9 +7,9 @@ import 'Actions/DownloadModPack.dart';
 import 'Actions/JsonToLang.dart';
 import 'Actions/Spider.dart';
 import 'Actions/UpdateLang.dart';
+import 'function/RPMTWData.dart';
 
 late String gameVersion;
-late String dirGameVersion;
 
 void main(List<String> arguments) async {
   print('Hello RPMTW World!');
@@ -17,13 +17,9 @@ void main(List<String> arguments) async {
   ArgParser parser = ArgParser();
 
   /// 執行腳本所使用的遊戲版本
-  parser.addOption('dirGameVersion', defaultsTo: "1.17", callback: (value) {
-    dirGameVersion = value!;
-  }, allowed: ['1.12', '1.16', '1.17']);
-
-  parser.addOption('gameVersion', defaultsTo: "1.17.1", callback: (value) {
+  parser.addOption('gameVersion', defaultsTo: RPMTWData.gameVersions.last, callback: (value) {
     gameVersion = value!;
-  });
+  }, allowed: RPMTWData.gameVersions);
 
   parser.addMultiOption(
     'action',

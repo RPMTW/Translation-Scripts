@@ -63,7 +63,7 @@ class CurseForgeAddon {
   int? getLastFileIdByVersion(String version) {
     try {
       return gameVersionLatestFiles.firstWhere(
-        (Map item) => item['gameVersion'] == version,
+        (Map item) => item['gameVersion'].toString().startsWith(version),
       )['projectFileId'];
     } catch (e) {
       return null;

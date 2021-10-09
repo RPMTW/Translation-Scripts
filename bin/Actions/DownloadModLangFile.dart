@@ -5,8 +5,8 @@ import 'package:archive/archive.dart';
 import '../Apis/CurseForgeAPI.dart';
 import '../Models/CurseForgeAddon.dart';
 import '../Models/CurseForgeFile.dart';
+import '../Models/ModInfo.dart';
 import '../Models/ModMetadata.dart';
-import '../function/CurseForgeIndex.dart';
 import '../function/LangUttily.dart';
 import '../main.dart';
 
@@ -54,7 +54,7 @@ class DownloadModLangFile {
       try {
         ModMetadata? data = _getModMetadata(archive);
         if (data != null) {
-          CurseForgeIndex().write(data.modID, curseForgeID);
+          ModInfos().add(data.modID, curseForgeID);
           print("[ $curseForgeID | 2/4 ] 解析模組資訊檔案成功");
         } else {
           print("[ $curseForgeID | wrong ] 找不到模組資訊檔案");

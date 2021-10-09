@@ -62,7 +62,7 @@ class LangUttily {
     late Map englishLangMap;
 
     /// 由於 1.12 使用舊版語系檔案格式
-    if (dirGameVersion == "1.12") {
+    if (gameVersion == "1.12") {
       englishLangMap = oldLangToMap(englishLang);
     } else {
       englishLangMap = gsonDecode(englishLang);

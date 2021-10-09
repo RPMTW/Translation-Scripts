@@ -10,12 +10,12 @@ class PathUttily {
 
   Directory get _root => zhTWPath ? Directory(join(Directory.current.path, "zh-TW")) : Directory.current;
 
-  File getCuseForgeIndexFile() {
-    return File(join(_root.path, dirGameVersion, 'CurseForgeIndex.json'));
+  File getModInfoFile() {
+    return File(join(_root.path, gameVersion, 'ModInfo.json'));
   }
 
   Directory getAssetsDirectory() {
-    return Directory(join(_root.path, dirGameVersion, 'assets'));
+    return Directory(join(_root.path, gameVersion, 'assets'));
   }
 
   Directory getLangDirectory(String modID) {
