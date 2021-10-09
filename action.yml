@@ -17,10 +17,6 @@ inputs:
     description: "資料夾的遊戲版本名稱"
     required: true
     default: "1.17"
-# outputs:
-#   test:
-#     description: "test"
-#     value: test
 runs:
   using: "composite"
   steps:

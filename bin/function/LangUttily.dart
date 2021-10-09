@@ -7,7 +7,6 @@ import 'package:path/path.dart';
 
 import '../main.dart';
 import 'PathUttily.dart';
-import 'PathUttily.dart';
 
 class LangUttily {
   /// Lang轉換為Json格式，由 https://gist.github.com/ChAoSUnItY/31c147efd2391b653b8cc12da9699b43 修改並移植而成
@@ -84,6 +83,9 @@ class LangUttily {
 
   static Future<bool> writePatchouliBooks(Archive archive, String modID) async {
     bool isPatchouliBooks = false;
+    bool isI18n = false;
+    Map<String, void> bookNames = {};
+    List<ArchiveFile> files = [];
     for (ArchiveFile file in archive) {
       String fileName = file.name;
 
@@ -91,28 +93,66 @@ class LangUttily {
       if (fileName.startsWith("data/$modID/patchouli_books") || fileName.startsWith("assets/$modID/patchouli_books")) {
         /// 如果是檔案才處理
         if (file.isFile) {
-          Directory patchouliBooksDir = PathUttily().getPatchouliBooksDirectory(modID);
-
-          /// assets/[modID]/patchouli_books/[BookName]/[Lang_Code]/......
-
-          List<String> _allPath = [patchouliBooksDir.path];
-          List<String> _bookPath = split(fileName.split("/").sublist(3).join("/"));
-          if (_bookPath[1] == "en_us") {
-            /// 將 en_us 換成 zh_tw
-            _bookPath[1] = "zh_tw";
-          } else {
-            continue;
-          }
           isPatchouliBooks = true;
-
-          _allPath.addAll(_bookPath);
-
-          File(joinAll(_allPath))
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(file.content as List<int>);
+          bookNames.addAll({
+            fileName.split("/").sublist(3)[0]: null,
+          });
+          files.add(file);
         }
       }
     }
+
+    for (String bookName in bookNames.keys) {
+      try {
+        ArchiveFile bookConfigFile = files.firstWhere((f) {
+          List<String> _ = f.name.split("/").sublist(3);
+
+          return _[1] == "book.json" && _[0] == bookName;
+        });
+
+        Map bookConfig = json.decode(Utf8Decoder(allowMalformed: true).convert(bookConfigFile.content as List<int>));
+
+        isI18n = bookConfig['i18n'];
+      } catch (e) {
+        if (isPatchouliBooks) {
+          print("[ $modID - $bookName | wrong ] 找不到手冊資訊檔案\n$e");
+        }
+      }
+
+      if (isI18n) {
+        print("[ $modID - $bookName | info ] 由於此模組手冊內容被偵測到不需翻譯，因此略過新增");
+        Directory _booksDir = Directory(join(PathUttily().getPatchouliBooksDirectory(modID).path, bookName));
+
+        if (_booksDir.existsSync()) {
+          _booksDir.deleteSync(recursive: true);
+        }
+      }
+
+      for (ArchiveFile file in files) {
+        String fileName = file.name;
+        Directory patchouliBooksDir = PathUttily().getPatchouliBooksDirectory(modID);
+
+        /// assets/[modID]/patchouli_books/[BookName]/[Lang_Code]/......
+
+        List<String> _allPath = [patchouliBooksDir.path];
+        List<String> _bookPath = split(fileName.split("/").sublist(3).join("/"));
+
+        if (_bookPath[0] != bookName) continue;
+        if (_bookPath[1] == "en_us") {
+          /// 將 en_us 換成 zh_tw
+          _bookPath[1] = "zh_tw";
+        } else {
+          continue;
+        }
+
+        _allPath.addAll(_bookPath);
+
+        File(joinAll(_allPath))
+          ..createSync(recursive: true)
+          ..writeAsBytesSync(file.content as List<int>);
+      }
+    }
+
     return isPatchouliBooks;
   }
 }
