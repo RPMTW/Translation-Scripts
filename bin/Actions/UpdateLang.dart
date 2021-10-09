@@ -11,8 +11,10 @@ class UpdateLang {
       ModInfo modInfo = ModInfos()[modID]!;
       try {
         _doneCount++;
-        print("[ $_doneCount/${ModInfos().keys.length} ] 更新語系檔案中...");
-        await DownloadModLangFile.run(modInfo.curseForgeID);
+        if (modInfo.needUpdate) {
+          print("[ $_doneCount/${ModInfos().keys.length} ] 更新語系檔案中...");
+          await DownloadModLangFile.run(modInfo.curseForgeID);
+        }
       } catch (e) {
         print("[${modInfo.curseForgeID}] 更新語系檔案時發生未知錯誤\n$e");
       }
