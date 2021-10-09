@@ -107,12 +107,16 @@ class LangUttily {
         ArchiveFile bookConfigFile = files.firstWhere((f) {
           List<String> _ = f.name.split("/").sublist(3);
 
-          return _[1] == "book.json" && _[0] == bookName;
+          try {
+            return _[1] == "book.json" && _[0] == bookName;
+          } catch (e) {
+            return false;
+          }
         });
 
         Map bookConfig = json.decode(Utf8Decoder(allowMalformed: true).convert(bookConfigFile.content as List<int>));
 
-        isI18n = bookConfig['i18n'];
+        isI18n = bookConfig['i18n'] ?? false;
       } catch (e) {
         if (isPatchouliBooks) {
           print("[ $modID - $bookName | wrong ] 找不到手冊資訊檔案\n$e");
@@ -138,6 +142,11 @@ class LangUttily {
         List<String> _bookPath = split(fileName.split("/").sublist(3).join("/"));
 
         if (_bookPath[0] != bookName) continue;
+
+        try {
+          if (_bookPath[2] == "templates") continue;
+        } catch (e) {}
+
         if (_bookPath[1] == "en_us") {
           /// 將 en_us 換成 zh_tw
           _bookPath[1] = "zh_tw";

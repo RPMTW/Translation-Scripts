@@ -18,6 +18,7 @@ include: package:lints/recommended.yaml
 linter:
   rules:
     file_names: false
+    empty_catches: false
 # analyzer:
 #   exclude:
 #     - path/to/excluded/files/**
