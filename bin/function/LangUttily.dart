@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
-import 'package:gson/gson.dart';
 import 'package:path/path.dart';
 
 import '../main.dart';
@@ -65,7 +64,7 @@ class LangUttily {
     if (gameVersion == "1.12") {
       englishLangMap = oldLangToMap(englishLang);
     } else {
-      englishLangMap = gsonDecode(englishLang);
+      englishLangMap = json.decode(englishLang);
     }
 
     /// 假設先前已經存在語系檔案就新增回去

@@ -11,7 +11,6 @@ dependencies:
   archive: ^3.1.5
   args: ^2.3.0
   dio: ^4.0.0
-  gson: 0.1.6-dev
   path: ^1.8.0
   toml: ^0.12.0
 
