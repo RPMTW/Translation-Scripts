@@ -16,7 +16,8 @@ class LangUttily {
     String? lastKey;
 
     for (String line in LineSplitter().convert(source)) {
-      if (line.startsWith("#") || line.startsWith("//") || line.startsWith("!")) continue;
+      if (line.startsWith("#") || line.startsWith("//") || line.startsWith("!"))
+        continue;
       if (line.contains("=")) {
         if (line.split("=").length == 2) {
           List<String> kv = line.split("=");
@@ -89,7 +90,8 @@ class LangUttily {
       String fileName = file.name;
 
       /// 1.14+ 使用 data 作為儲存 Patchouli 手冊位置 ，1.14 以下版本使用 assets 儲存 Patchouli 手冊位置
-      if (fileName.startsWith("data/$modID/patchouli_books") || fileName.startsWith("assets/$modID/patchouli_books")) {
+      if (fileName.startsWith("data/$modID/patchouli_books") ||
+          fileName.startsWith("assets/$modID/patchouli_books")) {
         /// 如果是檔案才處理
         if (file.isFile) {
           isPatchouliBooks = true;
@@ -113,7 +115,8 @@ class LangUttily {
           }
         });
 
-        Map bookConfig = json.decode(Utf8Decoder(allowMalformed: true).convert(bookConfigFile.content as List<int>));
+        Map bookConfig = json.decode(Utf8Decoder(allowMalformed: true)
+            .convert(bookConfigFile.content as List<int>));
 
         isI18n = bookConfig['i18n'] ?? false;
       } catch (e) {
@@ -124,40 +127,43 @@ class LangUttily {
 
       if (isI18n) {
         print("[ $modID - $bookName | info ] 由於此模組手冊內容被偵測到不需翻譯，因此略過新增");
-        Directory _booksDir = Directory(join(PathUttily().getPatchouliBooksDirectory(modID).path, bookName));
+        Directory _booksDir = Directory(join(
+            PathUttily().getPatchouliBooksDirectory(modID).path, bookName));
 
         if (_booksDir.existsSync()) {
           _booksDir.deleteSync(recursive: true);
         }
-      }
+      } else {
+        for (ArchiveFile file in files) {
+          String fileName = file.name;
+          Directory patchouliBooksDir =
+              PathUttily().getPatchouliBooksDirectory(modID);
 
-      for (ArchiveFile file in files) {
-        String fileName = file.name;
-        Directory patchouliBooksDir = PathUttily().getPatchouliBooksDirectory(modID);
+          /// assets/[modID]/patchouli_books/[BookName]/[Lang_Code]/......
 
-        /// assets/[modID]/patchouli_books/[BookName]/[Lang_Code]/......
+          List<String> _allPath = [patchouliBooksDir.path];
+          List<String> _bookPath =
+              split(fileName.split("/").sublist(3).join("/"));
 
-        List<String> _allPath = [patchouliBooksDir.path];
-        List<String> _bookPath = split(fileName.split("/").sublist(3).join("/"));
+          if (_bookPath[0] != bookName) continue;
 
-        if (_bookPath[0] != bookName) continue;
+          try {
+            if (_bookPath[2] == "templates") continue;
+          } catch (e) {}
 
-        try {
-          if (_bookPath[2] == "templates") continue;
-        } catch (e) {}
+          if (_bookPath[1] == "en_us") {
+            /// 將 en_us 換成 zh_tw
+            _bookPath[1] = "zh_tw";
+          } else {
+            continue;
+          }
 
-        if (_bookPath[1] == "en_us") {
-          /// 將 en_us 換成 zh_tw
-          _bookPath[1] = "zh_tw";
-        } else {
-          continue;
+          _allPath.addAll(_bookPath);
+
+          File(joinAll(_allPath))
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(file.content as List<int>);
         }
-
-        _allPath.addAll(_bookPath);
-
-        File(joinAll(_allPath))
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(file.content as List<int>);
       }
     }
 
