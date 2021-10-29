@@ -89,7 +89,7 @@ class ModInfo {
 
   DateTime lastUpdated;
 
-  bool get needUpdate => lastUpdated.isBefore(DateTime.now().subtract(Duration(days: 30)));
+  bool get needUpdate => lastUpdated.isBefore(DateTime.now().subtract(Duration(days: 10)));
 
   ModInfo(this.curseForgeID, this.lastUpdated, this.modID);
 
