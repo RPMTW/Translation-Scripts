@@ -76,6 +76,9 @@ class LangUttily {
     /// 新增英文語系檔案的內容
     langMap.addAll(englishLangMap);
 
+    /// 防呆處理：假設語系檔案為空
+    if (langMap.isEmpty) return;
+
     PathUttily().getChineseLangFile(modID)
       ..createSync(recursive: true)
       ..writeAsStringSync(JsonEncoder.withIndent('    ').convert(langMap));
