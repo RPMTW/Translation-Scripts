@@ -69,7 +69,7 @@ class LangUttily {
     if (gameVersion == "1.12") {
       englishLangMap = oldLangToMap(englishLang);
     } else {
-      englishLangMap = json.decode(englishLang).cast<String, String>();
+      englishLangMap = Map<String, String>.from(json.decode(englishLang));
     }
 
     /// 假設先前已經存在語系檔案就新增回去
@@ -84,7 +84,8 @@ class LangUttily {
     if (langMap.isEmpty) return;
 
     /// 防呆處理：修改原版語系檔案
-    langMap.removeWhere((key, value) => minecraftVanillaLang.keys.any((e) => e == key));
+    langMap.removeWhere(
+        (key, value) => minecraftVanillaLang.keys.any((e) => e == key));
 
     PathUttily().getChineseLangFile(modID)
       ..createSync(recursive: true)
