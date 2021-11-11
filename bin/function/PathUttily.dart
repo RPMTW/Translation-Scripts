@@ -39,9 +39,4 @@ class PathUttily {
   File getOldChineseLangFile(String modID) {
     return File(join(getLangDirectory(modID).path, 'zh_tw.lang'));
   }
-
-  File getVanillaLangFile() {
-    return File(
-        join(Directory.current.path, 'Data', 'minecraft_vanilla_lang.json'));
-  }
 }

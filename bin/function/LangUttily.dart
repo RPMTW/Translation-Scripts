@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:path/path.dart';
 
+import '../Data/MinecraftVanillaLang.dart';
 import '../main.dart';
 import 'PathUttily.dart';
 
@@ -60,9 +61,6 @@ class LangUttily {
   }
 
   static Future<void> write(String modID, String englishLang) async {
-    Map<String, String> vanillaLang = json
-        .decode(PathUttily().getVanillaLangFile().readAsStringSync())
-        .cast<String, String>();
     Map<String, String> langMap = {};
     File chineseLang = PathUttily().getChineseLangFile(modID);
     late Map<String, String> englishLangMap;
@@ -86,7 +84,7 @@ class LangUttily {
     if (langMap.isEmpty) return;
 
     /// 防呆處理：修改原版語系檔案
-    langMap.removeWhere((key, value) => vanillaLang.keys.any((e) => e == key));
+    langMap.removeWhere((key, value) => minecraftVanillaLang.keys.any((e) => e == key));
 
     PathUttily().getChineseLangFile(modID)
       ..createSync(recursive: true)
