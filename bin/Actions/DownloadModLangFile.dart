@@ -93,8 +93,8 @@ class DownloadModLangFile {
 
           print("[ $curseForgeID | 3/3 ] 處理 [$modID] 的語系檔案完成");
         }
-      } catch (e) {
-        print("[ $curseForgeID | error ] 解析模組語系時發生未知錯誤\n$e");
+      } catch (e, stack) {
+        print("[ $curseForgeID | error ] 解析模組語系時發生未知錯誤\n$e\n$stack");
       }
     } else {
       print("[ $curseForgeID | error ] 解壓縮模組檔案時發生未知錯誤");
