@@ -8,7 +8,9 @@ class PathUttily {
   final bool zhTWPath;
   PathUttily({this.zhTWPath = false});
 
-  Directory get _root => zhTWPath ? Directory(join(Directory.current.path, "zh-TW")) : Directory.current;
+  Directory get _root => zhTWPath
+      ? Directory(join(Directory.current.path, "zh-TW"))
+      : Directory.current;
 
   File getModInfoFile() {
     return File(join(_root.path, gameVersion, 'ModInfo.json'));
@@ -36,5 +38,10 @@ class PathUttily {
 
   File getOldChineseLangFile(String modID) {
     return File(join(getLangDirectory(modID).path, 'zh_tw.lang'));
+  }
+
+  File getVanillaLangFile() {
+    return File(
+        join(Directory.current.path, 'Data', 'minecraft_vanilla_lang.json'));
   }
 }

@@ -10,14 +10,17 @@ import 'PathUttily.dart';
 class LangUttily {
   /// Lang轉換為Json格式，由 https://gist.github.com/ChAoSUnItY/31c147efd2391b653b8cc12da9699b43 修改並移植而成
   /// 特別感謝3X0DUS - ChAoS#6969 編寫此function。
-  static Map oldLangToMap(String source) {
-    Map obj = {};
+  static Map<String, String> oldLangToMap(String source) {
+    Map<String, String> obj = {};
 
     String? lastKey;
 
     for (String line in LineSplitter().convert(source)) {
-      if (line.startsWith("#") || line.startsWith("//") || line.startsWith("!"))
+      if (line.startsWith("#") ||
+          line.startsWith("//") ||
+          line.startsWith("!")) {
         continue;
+      }
       if (line.contains("=")) {
         if (line.split("=").length == 2) {
           List<String> kv = line.split("=");
@@ -26,13 +29,13 @@ class LangUttily {
           obj[kv[0]] = kv[1].trimLeft();
         } else {
           if (lastKey == null) continue;
-          obj[lastKey] += "\n$line";
+          obj[lastKey] = "${obj[lastKey]}\n$line";
         }
       } else if (!line.contains("=")) {
         if (lastKey == null) continue;
         if (line == "") continue;
 
-        obj[lastKey] += "\n$line";
+        obj[lastKey] = "${obj[lastKey]}\n$line";
       }
     }
     return obj;
@@ -57,15 +60,18 @@ class LangUttily {
   }
 
   static Future<void> write(String modID, String englishLang) async {
-    Map langMap = {};
+    Map<String, String> vanillaLang = json
+        .decode(PathUttily().getVanillaLangFile().readAsStringSync())
+        .cast<String, String>();
+    Map<String, String> langMap = {};
     File chineseLang = PathUttily().getChineseLangFile(modID);
-    late Map englishLangMap;
+    late Map<String, String> englishLangMap;
 
     /// 由於 1.12 使用舊版語系檔案格式
     if (gameVersion == "1.12") {
       englishLangMap = oldLangToMap(englishLang);
     } else {
-      englishLangMap = json.decode(englishLang);
+      englishLangMap = json.decode(englishLang).cast<String, String>();
     }
 
     /// 假設先前已經存在語系檔案就新增回去
@@ -78,6 +84,9 @@ class LangUttily {
 
     /// 防呆處理：假設語系檔案為空
     if (langMap.isEmpty) return;
+
+    /// 防呆處理：修改原版語系檔案
+    langMap.removeWhere((key, value) => vanillaLang.keys.any((e) => e == key));
 
     PathUttily().getChineseLangFile(modID)
       ..createSync(recursive: true)
