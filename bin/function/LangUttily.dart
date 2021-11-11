@@ -74,7 +74,8 @@ class LangUttily {
 
     /// 假設先前已經存在語系檔案就新增回去
     if (await chineseLang.exists()) {
-      langMap.addAll(json.decode(await chineseLang.readAsString()));
+      langMap.addAll(Map<String, String>.from(
+          json.decode(await chineseLang.readAsString())));
     }
 
     /// 新增英文語系檔案的內容
