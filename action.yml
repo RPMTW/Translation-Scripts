@@ -12,7 +12,7 @@ inputs:
   gameVersion:
     description: "遊戲版本"
     required: true
-    default: "1.17"
+    default: "1.18"
 
 runs:
   using: "composite"
