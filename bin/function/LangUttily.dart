@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:json5/json5.dart';
 import 'package:path/path.dart';
 
 import '../Data/MinecraftVanillaLang.dart';
@@ -69,7 +70,9 @@ class LangUttily {
     if (gameVersion == "1.12") {
       englishLangMap = oldLangToMap(englishLang);
     } else {
-      englishLangMap = Map<String, String>.from(json.decode(englishLang));
+      englishLangMap = Map<String, String>.from(JSON5.parse(
+        englishLang,
+      ));
     }
 
     /// 假設先前已經存在語系檔案就新增回去
