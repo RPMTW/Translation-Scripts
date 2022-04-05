@@ -13,5 +13,6 @@ dependencies:
   dio: ^4.0.0
   json5: ^0.7.0
   path: ^1.8.0
+  rpmtw_api_client: ^1.0.8-dev.2
   toml: ^0.12.0
 
