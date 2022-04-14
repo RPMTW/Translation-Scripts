@@ -1,12 +1,10 @@
 name: "RPMTW Translation Scripts"
 description: "RPMTW 的 Minecraft 翻譯語系檔案腳本 for Github Action"
-icon: "arrow-down-circle"
-color: "blue"
+author: "The RPMTW Team"
 inputs:
   action:
     description: "要執行腳本的操作類型"
     required: true
-    default: "spider"
   args:
     description: "要執行腳本的參數"
     required: false
@@ -15,17 +13,24 @@ inputs:
     description: "遊戲版本"
     required: true
     default: "1.18"
+  rpmtwToken:
+    description: "The token to use for the RPMTW API."
+    required: true
 
 runs:
   using: "composite"
   steps:
-    # 安裝 Dart SDK
     - uses: dart-lang/setup-dart@v1
-    # 安裝函式庫
-    - run: |
+      with:
+        # https://dart.dev/get-dart/archive
+        version: 2.16.2
+    - name: Install dependencies
+      run: |
         dart pub get --directory=${{ github.action_path }}
       shell: bash
-    # 開始執行腳本
+    - name: Compile the script
+      run: dart compile exe bin/rpmtranslator_script.dart -o rpmtranslator_script
+      shell: bash
     - name: Run scripts ( ${{ inputs.action }} Action )
-      run: dart run ${{ github.action_path }}/bin/main.dart --action ${{ inputs.action }},${{ inputs.args }} --gameVersion ${{ inputs.gameVersion }}
+      run: ./rpmtranslator_script ${{ inputs.action }} --rpmtwToken ${{ inputs.rpmtwToken }} --gameVersion ${{ inputs.gameVersion }}
       shell: bash
