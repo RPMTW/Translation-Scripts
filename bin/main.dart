@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
 import 'Actions/DownloadModLangFile.dart';
 import 'Actions/DownloadModPack.dart';
@@ -17,9 +18,9 @@ void main(List<String> arguments) async {
   ArgParser parser = ArgParser();
 
   /// 執行腳本所使用的遊戲版本
-  parser.addOption('gameVersion', defaultsTo: RPMTWData.gameVersions.last, callback: (value) {
+  parser.addOption('gameVersion', callback: (value) {
     gameVersion = value!;
-  }, allowed: RPMTWData.gameVersions);
+  }, allowed: RPMTWData.gameVersions, mandatory: true);
 
   parser.addMultiOption(
     'action',
@@ -32,7 +33,8 @@ void main(List<String> arguments) async {
           return;
         }
 
-        await DownloadModLangFile.run(int.parse(actionArgs)).then((value) => exit(0));
+        await DownloadModLangFile.run(int.parse(actionArgs))
+            .then((value) => exit(0));
       } else if (actionName == Spider.route) {
         if (int.tryParse(actionArgs!) == null) {
           print('Invalid Mod Conut');
@@ -48,12 +50,14 @@ void main(List<String> arguments) async {
           return;
         }
 
-        await DownloadModPack.run(int.parse(actionArgs)).then((value) => exit(0));
+        await DownloadModPack.run(int.parse(actionArgs))
+            .then((value) => exit(0));
       } else if (actionName == UpdateLang.route) {
         await UpdateLang.run().then((value) => exit(0));
       }
     },
   );
 
+  RPMTWApiClient.init();
   parser.parse(arguments);
 }

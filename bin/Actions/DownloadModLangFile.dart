@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:archive/archive.dart';
+import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
-import '../Apis/CurseForgeAPI.dart';
-import '../Models/CurseForgeAddon.dart';
-import '../Models/CurseForgeFile.dart';
 import '../Models/ModInfo.dart';
 import '../Models/ModMetadata.dart';
 import '../function/LangUttily.dart';
+import '../function/extension.dart';
 import '../main.dart';
 
 enum ModMetadataTypes {
@@ -37,16 +36,30 @@ extension ModMetadataExtension on ModMetadataTypes {
 class DownloadModLangFile {
   static final String route = "download_mod";
 
-  static Future<void> run(int curseForgeID, {bool lastFile = false}) async {
+  static Future<void> run(int curseForgeID, {int? fileID}) async {
     print("[ $curseForgeID | 1/3 ] 解析模組資訊中...");
-    CurseForgeAddon addon = await CurseForgeAPI.getAddonByID(curseForgeID);
+    final RPMTWApiClient client = RPMTWApiClient.instance;
+    final CurseForgeMod mod =
+        await client.curseforgeResource.getMod(curseForgeID);
 
-    int? lastFileId = lastFile ? addon.getLastFileId() : addon.getLastFileIdByVersion(gameVersion);
+    int? modFileId;
+    try {
+      modFileId = fileID ??
+          mod.latestFilesIndexes
+              .where((e) => e.gameVersion.contains(gameVersion))
+              .first
+              .fileId;
+    } catch (e) {
+      modFileId = null;
+    }
 
-    if (lastFileId == null) return print("[$curseForgeID | error ] 在 CurseForge 找不到符合此版本的語系檔案");
+    if (modFileId == null) {
+      print("[$curseForgeID | error ] 在 CurseForge 找不到符合此版本的語系檔案");
+      return;
+    }
 
-    CurseForgeFile file = await CurseForgeAPI.getFileInfoByID(addon.id, lastFileId);
-
+    CurseForgeModFile file =
+        await client.curseforgeResource.getModFile(curseForgeID, modFileId);
     Archive? archive = await file.downloadToArchive();
 
     if (archive != null) {
@@ -70,12 +83,18 @@ class DownloadModLangFile {
           if (modID == "minecraft") continue;
 
           Future<void> _runLangWrite(ArchiveFile file) async {
-            await LangUttily.write(modID, Utf8Decoder(allowMalformed: true).convert(file.content as List<int>));
+            await LangUttily.write(
+                modID,
+                Utf8Decoder(allowMalformed: true)
+                    .convert(file.content as List<int>));
           }
 
-          ArchiveFile? newEnglishLangFile = archive.findFile("assets/$modID/lang/en_us.json");
-          ArchiveFile? englishLangFile1 = archive.findFile("assets/$modID/lang/en_us.lang");
-          ArchiveFile? englishLangFile2 = archive.findFile("assets/$modID/lang/en_US.lang");
+          ArchiveFile? newEnglishLangFile =
+              archive.findFile("assets/$modID/lang/en_us.json");
+          ArchiveFile? englishLangFile1 =
+              archive.findFile("assets/$modID/lang/en_us.lang");
+          ArchiveFile? englishLangFile2 =
+              archive.findFile("assets/$modID/lang/en_US.lang");
 
           if (newEnglishLangFile != null) {
             await _runLangWrite(newEnglishLangFile);
@@ -111,6 +130,7 @@ class DownloadModLangFile {
         return ModMetadata.fromFabric(f.content as List<int>);
       }
     }
+    return null;
   }
 
   static List<String> _getHasLangMod(Archive archive) {
