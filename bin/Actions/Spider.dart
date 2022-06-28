@@ -10,7 +10,7 @@ class Spider {
     final RPMTWApiClient client = RPMTWApiClient.instance;
     final int _index = (modConut / 50).ceil();
 
-    for (int i = 0; i < _index; i++) {
+    for (int i = 0; i <= _index; i++) {
       try {
         List<CurseForgeMod> mods = await client.curseforgeResource.searchMods(
             game: CurseForgeGames.minecraft,
