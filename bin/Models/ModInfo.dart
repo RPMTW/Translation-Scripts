@@ -9,12 +9,8 @@ class ModInfos extends MapBase<String, ModInfo> {
 
   late Map<String, ModInfo> _map;
 
-  ModInfos({Map<String, ModInfo>? map}) {
-    if (map != null) {
-      _map = map;
-    } else {
-      _map = _read();
-    }
+  ModInfos() {
+    _map = _read();
   }
 
   String _readAsString() {
@@ -23,11 +19,8 @@ class ModInfos extends MapBase<String, ModInfo> {
 
   Map<String, ModInfo> _read() {
     Map map = json.decode(_readAsString());
-    Map<String, ModInfo> ruselt = {};
-    map.forEach((key, value) {
-      ruselt[key] = ModInfo.fromJson(value);
-    });
-    return ruselt;
+
+    return map.map((key, value) => MapEntry(key, ModInfo.fromJson(value)));
   }
 
   void add(String modID, int curseForgeID) {
@@ -39,24 +32,10 @@ class ModInfos extends MapBase<String, ModInfo> {
     save();
   }
 
-  ModInfo? getByModID(String modID) {
-    _map[modID];
-  }
-
   void save() {
     file
       ..createSync(recursive: true)
       ..writeAsStringSync(json.encode(_map));
-  }
-
-  ModInfos needUpdates() {
-    Map<String, ModInfo> ruselt = {};
-    _map.forEach((key, value) {
-      if (value.needUpdate) {
-        ruselt[key] = value;
-      }
-    });
-    return ModInfos(map: ruselt);
   }
 
   @override
@@ -89,7 +68,8 @@ class ModInfo {
 
   DateTime lastUpdated;
 
-  bool get needUpdate => lastUpdated.isBefore(DateTime.now().subtract(Duration(days: 10)));
+  bool get needUpdate =>
+      lastUpdated.isBefore(DateTime.now().subtract(Duration(days: 10)));
 
   ModInfo(this.curseForgeID, this.lastUpdated, this.modID);
 
