@@ -30,5 +30,10 @@ runs:
       shell: bash
     # 開始執行腳本
     - name: Run scripts ( ${{ inputs.action }} Action )
-      run: dart run ${{ github.action_path }}/bin/main.dart --action ${{ inputs.action }},${{ inputs.args }} --gameVersion ${{ inputs.gameVersion }}
+      run: |
+        cd ${{ github.action_path }}
+        dart compile exe ./bin/main.dart
+        cp ./bin/main ${{ github.workspace }}
+        cd ${{ github.workspace }}
+        ./main --action ${{ inputs.action }},${{ inputs.args }} --gameVersion ${{ inputs.gameVersion }}
       shell: bash
