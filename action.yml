@@ -24,6 +24,8 @@ runs:
   steps:
     # 安裝 Dart SDK
     - uses: dart-lang/setup-dart@v1
+      with: 
+        version: 2.19.0-444.2.beta
     # 安裝函式庫
     - run: |
         dart pub get --directory=${{ github.action_path }}
@@ -31,9 +33,5 @@ runs:
     # 開始執行腳本
     - name: Run scripts ( ${{ inputs.action }} Action )
       run: |
-        cd ${{ github.action_path }}
-        dart compile exe ./bin/main.dart
-        cp ./bin/main ${{ github.workspace }}
-        cd ${{ github.workspace }}
-        ./main --action ${{ inputs.action }},${{ inputs.args }} --gameVersion ${{ inputs.gameVersion }}
+        dart run ./bin/main.dart --action ${{ inputs.action }},${{ inputs.args }} --gameVersion ${{ inputs.gameVersion }}
       shell: bash
