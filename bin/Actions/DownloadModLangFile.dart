@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:archive/archive.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
-import '../models/mod_info.dart';
-import '../models/ModMetadata.dart';
+import '../mod/mod_info.dart';
+import '../mod/ModMetadata.dart';
 import '../function/LangUttily.dart';
 import '../function/extension.dart';
 import '../main.dart';

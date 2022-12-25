@@ -1,5 +1,5 @@
 import '../main.dart';
-import '../models/mod_info.dart';
+import '../mod/mod_info.dart';
 import 'DownloadModLangFile.dart';
 
 class UpdateLang {

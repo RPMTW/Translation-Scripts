@@ -9,7 +9,7 @@ import 'Actions/JsonToLang.dart';
 import 'Actions/Spider.dart';
 import 'Actions/UpdateLang.dart';
 import 'function/RPMTWData.dart';
-import 'models/mod_infos.dart';
+import 'mod/mod_infos.dart';
 
 late String gameVersion;
 final modInfos = ModInfos();
