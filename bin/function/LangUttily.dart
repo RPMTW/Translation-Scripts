@@ -13,34 +13,35 @@ class LangUttily {
   /// Lang轉換為Json格式，由 https://gist.github.com/ChAoSUnItY/31c147efd2391b653b8cc12da9699b43 修改並移植而成
   /// 特別感謝3X0DUS - ChAoS#6969 編寫此function。
   static Map<String, String> oldLangToMap(String source) {
-    Map<String, String> obj = {};
+    Map<String, String> result = {};
 
-    String? lastKey;
+    final lines = LineSplitter().convert(source);
 
-    for (String line in LineSplitter().convert(source)) {
-      if (line.startsWith("#") ||
-          line.startsWith("//") ||
-          line.startsWith("!")) {
+    for (String line in lines) {
+      // Skip lines beginning with '#', '//', '!', '=', 'pack.name' or 'pack.description'
+      if (line.startsWith('#') ||
+          line.startsWith('//') ||
+          line.startsWith('!') ||
+          line.startsWith('=') ||
+          line.startsWith('pack.name') ||
+          line.startsWith('pack.description')) {
         continue;
       }
-      if (line.contains("=")) {
-        if (line.split("=").length == 2) {
-          List<String> kv = line.split("=");
-          lastKey = kv[0];
 
-          obj[kv[0]] = kv[1].trimLeft();
-        } else {
-          if (lastKey == null) continue;
-          obj[lastKey] = "${obj[lastKey]}\n$line";
-        }
-      } else if (!line.contains("=")) {
-        if (lastKey == null) continue;
-        if (line == "") continue;
+      // Search index for '=' sign
+      final index = line.indexOf('=');
+      if (index == -1) continue;
 
-        obj[lastKey] = "${obj[lastKey]}\n$line";
-      }
+      // Split the line into keys (before the '=' sign) and values (after the '=' sign)
+      final key = line.substring(0, index);
+      String value = line.substring(index + 1);
+
+      // Delete any text after the '#' sign in the value, if present
+      value = value.split('#')[0].trim();
+      result[key] = value;
     }
-    return obj;
+
+    return result;
   }
 
   static String oldLangToJson(String source) {
@@ -52,10 +53,12 @@ class LangUttily {
     List<String> jsonKeys = json.keys.toList().cast<String>();
     String _lang = "";
     for (int i = 0; i < jsonKeys.length; i++) {
+      final key = jsonKeys[i];
       if (jsonKeys[i].startsWith("_comment_")) {
-        _lang += "#${json[jsonKeys[i]]}\n";
+        _lang += "#${json[key]}\n";
       } else {
-        _lang += "${jsonKeys[i]}=${json[jsonKeys[i]]}\n";
+        _lang +=
+            "$key=${json[key].toString().replaceAll(RegExp(r'\n'), r'\n')}\n";
       }
     }
     return _lang;
