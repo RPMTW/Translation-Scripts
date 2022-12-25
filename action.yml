@@ -25,7 +25,7 @@ runs:
     # 安裝 Dart SDK
     - uses: dart-lang/setup-dart@v1
       with: 
-        version: 2.19.0-444.2.beta
+        sdk: 2.19.0-444.2.beta
     # 安裝函式庫
     - run: |
         dart pub get --directory=${{ github.action_path }}
