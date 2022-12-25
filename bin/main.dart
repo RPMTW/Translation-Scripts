@@ -16,7 +16,6 @@ final modInfos = ModInfos();
 
 void main(List<String> arguments) async {
   print('Hello RPMTW World!');
-  await modInfos.init();
   ArgParser parser = ArgParser();
 
   /// 執行腳本所使用的遊戲版本
@@ -62,4 +61,5 @@ void main(List<String> arguments) async {
 
   RPMTWApiClient.init();
   parser.parse(arguments);
+  await modInfos.init();
 }
