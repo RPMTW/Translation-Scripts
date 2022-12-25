@@ -1,7 +1,10 @@
 name: "RPMTW Translation Scripts"
 description: "RPMTW 的 Minecraft 翻譯語系檔案腳本 for Github Action"
-icon: "arrow-down-circle"
-color: "blue"
+
+branding:
+  icon: "arrow-down-circle"
+  color: "blue"
+
 inputs:
   action:
     description: "要執行腳本的操作類型"

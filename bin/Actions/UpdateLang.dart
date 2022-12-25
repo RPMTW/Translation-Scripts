@@ -1,4 +1,5 @@
-import '../Models/ModInfo.dart';
+import '../main.dart';
+import '../models/mod_info.dart';
 import 'DownloadModLangFile.dart';
 
 class UpdateLang {
@@ -7,12 +8,14 @@ class UpdateLang {
   static Future<void> run() async {
     int _doneCount = 1;
 
-    for (String modID in ModInfos().keys) {
-      ModInfo modInfo = ModInfos()[modID]!;
+    final allModInfos = await modInfos.getAll();
+
+    for (String modID in allModInfos.keys) {
+      ModInfo modInfo = ModInfo.fromMap(allModInfos[modID]!);
       try {
         _doneCount++;
         if (modInfo.needUpdate) {
-          print("[ $_doneCount/${ModInfos().keys.length} ] 更新語系檔案中...");
+          print("[ $_doneCount/${allModInfos.keys.length} ] 更新語系檔案中...");
           await DownloadModLangFile.run(modInfo.curseForgeID);
         }
       } catch (e) {

@@ -9,12 +9,14 @@ import 'Actions/JsonToLang.dart';
 import 'Actions/Spider.dart';
 import 'Actions/UpdateLang.dart';
 import 'function/RPMTWData.dart';
+import 'models/mod_infos.dart';
 
 late String gameVersion;
+final modInfos = ModInfos();
 
 void main(List<String> arguments) async {
   print('Hello RPMTW World!');
-
+  await modInfos.init();
   ArgParser parser = ArgParser();
 
   /// 執行腳本所使用的遊戲版本

@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:archive/archive.dart';
 import 'package:rpmtw_api_client/rpmtw_api_client.dart';
 
-import '../Models/ModInfo.dart';
-import '../Models/ModMetadata.dart';
+import '../models/mod_info.dart';
+import '../models/ModMetadata.dart';
 import '../function/LangUttily.dart';
 import '../function/extension.dart';
 import '../main.dart';
@@ -67,7 +67,8 @@ class DownloadModLangFile {
       try {
         ModMetadata? data = _getModMetadata(archive);
         if (data != null) {
-          ModInfos().add(data.modID, curseForgeID);
+          await modInfos.setItem(
+              data.modID, ModInfo(curseForgeID, DateTime.now(), data.modID));
           print("[ $curseForgeID | 2/4 ] 解析模組資訊檔案成功");
         } else {
           print("[ $curseForgeID | wrong ] 找不到模組資訊檔案");

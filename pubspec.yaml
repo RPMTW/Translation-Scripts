@@ -14,5 +14,6 @@ dependencies:
   json5: ^0.7.0
   path: ^1.8.0
   rpmtw_api_client: ^1.0.8-rc.6
+  synchronized: ^3.0.0+3
   toml: ^0.12.0
 
